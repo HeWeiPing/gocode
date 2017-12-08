@@ -10,6 +10,9 @@ func main() {
 	fmt.Println(i, c, python, java)
 }
 
-func Test_test(t *testing.T){
+func Test_test(t *testing.T) {
 	fmt.Println("testing...")
+
+	ch := make(chan int)
+	fmt.Println(len(ch))
 }
