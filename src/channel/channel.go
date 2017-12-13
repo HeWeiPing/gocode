@@ -23,5 +23,5 @@ func main() {
 	go Go(*pch)
 	//time.Sleep(2 * time.Second)
 	<-ch //Be blocked until GO() finish
-	<-ch //Be blocked until GO() finish
+	<-ch //dead lock
 }
