@@ -19,13 +19,14 @@ func main() {
 	c := 3
 	//defer fmt.Println("aaa:", a, b, c)
 	fmt.Printf("&a:%p a=%d &b:%p b=%d &c:%p c=%d\n", &a, a, &b, b, &c, c)
-	defer f2(a, b, c)
+	defer f1(&a, &b, &c)
+	//defer f2(a, b, c)
 	a = 4
 	b = 5
 	c = 6
 	//defer fmt.Println("bbb:", a, b, c)
 	//defer p(a, b, c)
 	fmt.Printf("&a:%p a=%d &b:%p b=%d &c:%p c=%d\n", &a, a, &b, b, &c, c)
-	//defer f1(&a, &b, &c)
-	defer f2(a, b, c)
+	defer f1(&a, &b, &c)
+	//defer f2(a, b, c)
 }

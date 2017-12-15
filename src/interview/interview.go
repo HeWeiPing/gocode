@@ -234,24 +234,76 @@ func (set *threadSafeSet) Iter() <-chan interface{} {
 /*9999999999999999999999999999999999999999999999*/
 
 /*10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10*/
-type People interface {
-	Speak(string) string
-}
-
-type Student struct{}
-
-func (stu *Student) Speak(think string) (talk string) {
-	if think == "bitch" {
-		talk = "You are a good boy"
-	} else {
-		talk = "hi"
-	}
-	return talk
-}
-func main() {
-	var p People = Student{}
-	think := "bitch"
-	fmt.Println(p.Speak(think))
-}
+//type People interface {
+//	Speak(string) string
+//}
+//
+//type Student struct{}
+//
+//func (stu *Student) Speak(think string) (talk string) {
+//	if think == "bitch" {
+//		talk = "You are a good boy"
+//	} else {
+//		talk = "hi"
+//	}
+//	return talk
+//}
+//func main() {
+//	//这种写法不可以，因为你是用 *Student 指针类型为接收者参数
+//	//而不是Student类型为接收者参数(Speak method has pointer receiver)
+//	//var p People = Student{}
+//	var p People = &Student{}
+//	think := "bitch"
+//	fmt.Println(p.Speak(think))
+//}
 
 /*10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10*/
+
+/* 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 */
+//type People interface {
+//	Show()
+//}
+//
+//type Student struct{}
+//
+//func (stu *Student) Show() {}
+//
+//func live() People {
+//	var stu *Student
+//
+//	return stu
+//}
+//
+//func main() {
+//	if live() == nil {
+//		fmt.Println("aaaaa")
+//	} else {
+//		fmt.Println("bbbbb")
+//	}
+//}
+
+/* 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 11 */
+
+/* 12  12  12  12  12  12  12  12  12  12  12  12 */
+//func GetValue()int{
+//	return 1
+//}
+func GetValue() interface{}{
+	//return 1
+	return "abc"
+}
+func main(){
+	i := GetValue()
+
+	switch i.(type){//type 只能用在interface上
+	case int:
+		fmt.Println("int")
+	case string:
+		fmt.Println("string")
+	case interface{}:
+		fmt.Println("interface")
+	default:
+		fmt.Println("Unknown")
+	}
+}
+/* 12  12  12  12  12  12  12  12  12  12  12  12 */
