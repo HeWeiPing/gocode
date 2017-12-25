@@ -1,0 +1,78 @@
+{{template "header"}}
+<title>登录 -- 我的beego博客</title>
+<style>
+	.container{
+		display:table;
+		height:100%;
+		height:100%;
+	}
+	.row{
+		display: table-cell;
+		vertical-align: middle;
+	}
+	.row-centered {
+		text-align:center;
+	}
+	.col-centered {
+		display:inline-block;
+		float:none;
+		text-align:left;
+		margin-right:-4px;
+	}
+	#logindev{
+		position: absolute;
+		top: 50%;
+		-webkit-transform: translateY(-50%);
+		-moz-transform:  translateY(-50%);
+		-ms-transform:  translateY(-50%);
+		-o-transform:  translateY(-50%);
+		transform:  translateY(-50%);
+		background-color: #ccc;
+	}
+</style>
+</head>
+
+<body>
+<div class="container">
+	<div class="col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3 col-xs-8 col-xs-offset-2" id="logindev">
+		<form method="POST" action="/login">
+				<label style="font-size:30px;">帐号</label>
+				<input id="uname" class="form-control" placeholder="Account" name="uname">
+				<label style="font-size:30px;">密码</label>
+				<input id="pwd" type="password" class="form-control" placeholder="Password" name="pwd">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name=autoLogin>自动登录 
+				</label>
+			</div>
+			<button type="submit" class="btn btn-lg btn-primary btn-block" onclick="return checkInput();">登录</button>
+			<button class="btn btn-lg btn-primary btn-block" onclick="return backToHome();">取消</button>
+
+		</form>
+
+	</div>
+
+	<script type="text/javascript">
+	function checkInput(){
+		var uname = document.getElementById("uname");
+		if (uname.value.length == 0){
+			alert("请输入账号！")
+				return false
+		}
+		var pwd = document.getElementById("pwd");
+		if (pwd.value.length == 0){
+			alert("请输入密码！")
+				return false
+		}
+
+		return true
+	}
+	function backToHome(){
+		window.location.href = "/";
+			return false
+	}
+	</script>
+
+</div> <!-- /container -->
+</body>
+</html>

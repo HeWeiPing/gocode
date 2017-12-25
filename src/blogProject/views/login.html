@@ -1,74 +1,68 @@
 {{template "header"}}
 <title>登录 -- 我的beego博客</title>
 <style>
-	.container{
-		display:table;
-		height:100%;
-		height:100%;
-	}
-	.row{
-		display: table-cell;
-		vertical-align: middle;
-	}
-	.row-centered {
-		text-align:center;
-	}
-	.col-centered {
-		display:inline-block;
-		float:none;
-		text-align:left;
-		margin-right:-4px;
-	}
+body{
+	font-family: 'microsoft yahei',Arial,sans-serif;
+	margin:0;
+	padding:0;
+}
 </style>
 </head>
 
 <body>
-<div class="container">
-	<div class="row row-centered">
-		<div class="well col-md-6 col-centered">
-			<form method="POST" action="/login">
-				<div class="input-group input-group-md">
-					<label>帐号</label>
-					<input id="uname" class="form-control" placeholder="Account" name="uname">
-				</div>
-				<div class="input-group input-group-md">
-					<label>密码</label>
-					<input id="pwd" type="password" class="form-control" placeholder="Password" name="pwd">
-				</div>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" name=autoLogin>自动登录 
-					</label>
-				</div>
-				<button type="submit" class="btn btn-default" onclick="return checkInput();">登录</button>
-				<button class="btn btn-default" onclick="return backToHome();">取消</button>
+<div id="loginModal" class="modal show">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" onclick="return backToHome();">x</button>
+				<h1 class="text-center text-primary">登录</h1>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="/login" class="form col-md-12 center-block">
+					<div class="form-group">
+						<input id="uname" name="uname" type="text" class="form-control input-lg" placeholder="帐号">
+					</div>
+					<div class="form-group">
+						<input id="pwd" name="pwd"type="password" class="form-control input-lg" placeholder="密码">
+					</div>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" name=autoLogin>自动登录 
+						</label>
+					</div>
 
-			</form>
+					<div class="form-group">
+						<button class="btn btn-primary btn-lg btn-block" onclick="return checkInput();">立刻登录</button>
+						<span><a href="#">找回密码</a></span>
+						<span><a href="#" class="pull-right">注册</a></span>
+					</div>
+				</form>
+			</div><!--modal-body-->
+			  <div class="modal-footer">
+			 </div>
+		</div><!--modal-content-->
+	</div><!--modal-dialog-->
+</div><!-- model show-->
 
-		</div>
-	</div>
-
-	<script type="text/javascript">
-	function checkInput(){
-		var uname = document.getElementById("uname");
-		if (uname.value.length == 0){
-			alert("请输入账号！")
-				return false
-		}
-		var pwd = document.getElementById("pwd");
-		if (pwd.value.length == 0){
-			alert("请输入密码！")
-				return false
-		}
-
-		return true
-	}
-	function backToHome(){
-		window.location.href = "/";
+<script type="text/javascript">
+function checkInput(){
+	var uname = document.getElementById("uname");
+	if (uname.value.length == 0){
+		alert("请输入账号！")
 			return false
 	}
-	</script>
+	var pwd = document.getElementById("pwd");
+	if (pwd.value.length == 0){
+		alert("请输入密码！")
+			return false
+	}
 
-</div>
-</body>
-</html>
+	return true
+}
+function backToHome(){
+	window.location.href = "/";
+	return false
+}
+</script>
+
+</body> </html>
