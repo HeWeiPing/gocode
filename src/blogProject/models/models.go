@@ -39,11 +39,11 @@ type Category struct {
 }
 
 type Topic struct {
+	//attachment      string
 	Id              int64
 	Uid             int64
 	Title           string
-	Content         string `orm:"size(5000)"`
-	attachment      string
+	Content         string    `orm:"size(5000)"`
 	Created         time.Time `orm:"index"`
 	Updated         time.Time `orm:"index"`
 	Views           int64
@@ -54,6 +54,8 @@ type Topic struct {
 }
 
 func init() {
+	// 开启 orm 调试模式
+	orm.Debug = true
 	dbCfg = new(DBcfg)
 	dbCfg.db_dir = beego.AppConfig.String("db_dir")
 	dbCfg.db_type = beego.AppConfig.String("db_type")
@@ -129,6 +131,26 @@ func RegDbSqlite() error {
 	return nil
 }
 
+func AddTopic(title, content string) error {
+	o := orm.NewOrm()
+
+	//tp := Topic{
+	//	Title:   title,
+	//	Content: content,
+	//	Created: time.Now(),
+	//	Updated: time.Now(),
+	//}
+	//TODO:使用ORM接口插入失败
+	//_, err := o.Insert(tp)
+
+	_, err := o.Raw("INSERT INTO topic VALUES(?,?,?,?,?,?,?,?,?,?,?)", nil, 0, title, content, time.Now(), time.Now(), 0, "hwp", 0, 0, 0).Exec()
+	if err != nil {
+		clog.Clogv(clog.Red, "Raw SQL exec fail!")
+		beego.Error(err)
+	}
+	return err
+}
+
 func AddCategory(name string) error {
 	o := orm.NewOrm()
 	cate := &Category{Title: name}
@@ -155,10 +177,34 @@ func AddCategory(name string) error {
 	return nil
 }
 
+func DelCategory(cid string) error {
+	id, err := strconv.ParseInt(cid, 10, 64)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	o := orm.NewOrm()
+	cate := &Category{Id: id}
+	_, err = o.Delete(cate)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	return err
+}
+
 func GetAllCategories() ([]*Category, error) {
 	o := orm.NewOrm()
 	cates := make([]*Category, 0)
 	qs := o.QueryTable("category")
 	_, err := qs.All(&cates)
 	return cates, err
+}
+
+func GetAllTopics() ([]*Topic, error) {
+	o := orm.NewOrm()
+	tps := make([]*Topic, 0)
+	qs := o.QueryTable("topic")
+	_, err := qs.All(&tps)
+	return tps, err
 }

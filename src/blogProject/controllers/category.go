@@ -27,9 +27,18 @@ func (this *CategoryController) Get() {
 		this.Redirect("/category", 302)
 		return
 	case "del":
-		if len(this.Input().Get("id")) == 0 {
+		cid := this.Input().Get("cid")
+		if len(cid) == 0 {
 			break
 		}
+
+		err := models.DelCategory(cid)
+		if err != nil {
+			beego.Error(err)
+		}
+
+		this.Redirect("/category", 302)
+		return
 	}
 
 	var err error
@@ -40,4 +49,5 @@ func (this *CategoryController) Get() {
 
 	this.TplName = "category.html"
 	this.Data["IsCategory"] = true
+	this.Data["IsLogin"] = checkAccount(this.Ctx)
 }
