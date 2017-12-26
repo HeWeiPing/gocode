@@ -1,0 +1,81 @@
+{{template "header"}}
+<title>分类 -- 我的beego博客</title>
+<style>
+body{ 
+	padding-top: 70px; 
+}
+.container{
+	display:table;
+	height:80%;
+	height:80%;
+}
+.row{
+	display: table-cell;
+	vertical-align: middle;
+}
+.row-centered {
+	text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
+		{{template "navbar" .}}
+	</div>
+</div>
+
+<div class="container">
+	<h1>分类列表</h1>
+	<form method="GET" action="/category">
+		<div class="form-group">
+			<label>分类名称</label>
+			<input id="catId" class="form-control" placeholder="分类名称" name="catName">
+			<button type="submit" class="btn btn-default" onclick="return checkInput();">添加</button>
+			<input type="hidden" name="op" value="add">
+		</div>
+	</form>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>名称</th>
+				<th>文章数</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+		{{range .Categories}}
+		<tr>
+		<td>{{.Id}}</td>
+		<td>{{.Title}}</td>
+		<td>{{.TopicCount}}</td>
+		<td>
+			<a href="/category?op=del&tid={{.Id}}">删除</a>
+		</td>
+	</tr>
+		{{end}}
+		</tbody>
+	</table>
+
+
+	<script type="text/javascript">
+function checkInput(){
+	var cid= document.getElementById("catId");
+	if (cid.value.length == 0){
+		alert("请输入分类名称！")
+			return false
+	}
+	return true
+}
+	</script>
+
+</div>
+
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+</body>
+</html>
