@@ -1,0 +1,36 @@
+{{template "header"}}
+<title>{{.TitleView.Title}} -- 我的beego博客</title>
+<style>
+body{ padding-top: 70px; }
+.col-center-block {
+	float: none;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+</head>
+
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+	{{template "navbar" .}}
+</div>
+
+<div class="container">
+	<div class="col-center-block">
+
+		<div class="page-header">
+			<h1 style="font-size:80px">{{.TitleView.Title}}</h1>
+			<h6 class="text-muted">文章发表于 {{.TitleView.Created}} 共有{{.TitleView.Views}}次浏览， {{.TitleView.ReplyCount}}个评论</h6>
+			<p>
+			<label style="font-size:40px">{{.TitleView.Content}}</label>
+			</p>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+</body>
+</html>
