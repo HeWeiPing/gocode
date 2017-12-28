@@ -1,0 +1,45 @@
+{{template "header"}}
+<title>个人中心 -- 我的beego博客</title>
+<style>
+body{ padding-top: 70px; }
+</style>
+</head>
+
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+	<a class="navbar-brand" href="/">首页</a>
+	<div> 
+		<ul class="nav navbar-nav">
+			<li><a href="/topic">博文</a></li>
+			<li><a href="/category">分类</a></li>
+		</ul>
+	</div>
+
+	<div class="pull-right">
+		<ul class="nav navbar-nav">
+			<li><a href="/login?exit=true">退出</a></li>
+		</ul>
+	</div>
+</div>
+
+{{range .Topics}}
+<div>
+	<table class="table table-striped">
+		<tbody>
+		<tr>
+			<td>{{.Title}}</td>
+			<td>{{.Class}}</td>
+			<td>
+				<a href="/topic?op=mod&tid={{.Id}}">修改</a>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+{{end}}
+
+
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+</body>
+</html>

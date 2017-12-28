@@ -11,11 +11,18 @@
 <div class="pull-right">
 	<ul class="nav navbar-nav">
 		{{if .IsLogin}}
-		<li><a href="/login?exit=true">退出</a></li>
+		<li>
+			<a {{if .IsUserSpace}}{{else}}href="/user?"{{end}}>个人中心</a>
+		</li>
+		<li>
+			<a href="/login?exit=true">退出</a>
+		</li>
 		{{else}}
-		<li><a href="/login">管理员登陆</a></li>
+		<li>
+			<a href="/login">[登陆/注册]</a>
+		</li>
 		{{end}}
 	</ul>
-</div>
+</div> 
 
 {{end}}

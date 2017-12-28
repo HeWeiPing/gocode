@@ -27,11 +27,13 @@ func (this *TopicController) Post() {
 		return
 	}
 
+	var err error
+	op := this.Input().Get("op")
+	tid := this.Input().Get("tid")
 	title := this.Input().Get("title")
 	content := this.Input().Get("content")
 
-	var err error
-	err = models.AddTopic(title, content)
+	err = models.TopicUpdate(op, tid, title, content)
 	if err != nil {
 		beego.Error(err)
 	}
@@ -43,4 +45,8 @@ func (this *TopicController) Post() {
 func (this *TopicController) Add() {
 	this.TplName = "topic_add.html"
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
+}
+
+func (this *TopicController) Modify() {
+	this.TplName = "topic_mod.html"
 }

@@ -4,7 +4,7 @@ import (
 	"blogProject/models"
 	"clog"
 	"github.com/astaxie/beego"
-	//"strconv"
+	"strconv"
 )
 
 type TopicViewController struct {
@@ -25,11 +25,30 @@ func (this *TopicViewController) Get() {
 
 	tid := this.Input().Get("tid")
 	clog.Clogv(clog.Pink, "view topic tid=%s", tid)
-	//tid, err = strconv.ParseInt(tid, 10, 64)
 	this.Data["TitleView"], err = models.GetTopicById(tid)
 	if err != nil {
 		beego.Error(err)
 	}
 	clog.Clogv(clog.Red, "IsLogin=%t", checkAccount(this.Ctx))
 
+}
+
+func (this *TopicViewController) Post() {
+	var err error
+	repl := new(models.Respone)
+	op := this.Input().Get("op")
+	rp_tid := this.Input().Get("rp_tid")
+	rp_name := this.Input().Get("rp_name")
+	rp_content := this.Input().Get("rp_content")
+	rp_title := this.Input().Get("rp_title")
+
+	repl.TopicId, err = strconv.ParseInt(rp_tid, 10, 64)
+	repl.RpName = rp_name
+	repl.Title = rp_title
+	repl.Content = rp_content
+
+	err = models.ResponeUpdate(op, repl)
+	if err != nil {
+		beego.Error(err)
+	}
 }

@@ -16,9 +16,9 @@ body{ padding-top: 70px; }
 	{{template "navbar" .}}
 </div>
 
+<form method="GET" action="/category">
 <div class="container">
 	<div class="col-center-block">
-
 		<div class="page-header">
 			<h1 style="font-size:80px">{{.TitleView.Title}}</h1>
 			<h6 class="text-muted">文章发表于 {{.TitleView.Created}} 共有{{.TitleView.Views}}次浏览， {{.TitleView.ReplyCount}}个评论</h6>
@@ -28,8 +28,14 @@ body{ padding-top: 70px; }
 		</div>
 	</div>
 </div>
+<button type="submit" class="btn btn-default" onclick="return checkInput();">添加评论</button>
+
+<div class="form-group">
+	<textarea name="rp_content" cols="30" rows="10" class="form-control"></textarea>
+</div>
 
 
+</form>
 <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
 </body>

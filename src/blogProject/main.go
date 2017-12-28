@@ -1,8 +1,9 @@
 package main
 
 import (
-	"blogProject/controllers"
+	//	"blogProject/controllers"
 	"blogProject/models"
+	_ "blogProject/routers"
 	"clog"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -18,12 +19,5 @@ func main() {
 	// 自动建表
 	orm.RunSyncdb("default", false, true)
 
-	//注册beego路由
-	beego.Router("/", &controllers.HomeController{})
-	beego.Router("/topic", &controllers.TopicController{})
-	beego.Router("/login", &controllers.LoginController{})
-	beego.Router("/category", &controllers.CategoryController{})
-	beego.Router("/topicView", &controllers.TopicViewController{})
-	beego.AutoRouter(&controllers.TopicController{}) //自动路由
 	beego.Run()
 }

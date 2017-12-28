@@ -39,7 +39,6 @@ type Category struct {
 }
 
 type Topic struct {
-	//attachment      string
 	Id              int64
 	Uid             int64
 	Title           string
@@ -51,6 +50,27 @@ type Topic struct {
 	ReplyTime       time.Time `orm:"index"`
 	ReplyCount      int64
 	ReplyLastUserId int64
+	Mark            string `orm:"index"`
+	Class           string
+	//attachment      string
+}
+
+type Respone struct {
+	Id              int64
+	TopicId         int64
+	RpName          string
+	Title           string
+	Content         string    `orm:"size(512)"`
+	Created         time.Time `orm:"index"`
+	ReplyLastUserId int64
+}
+
+type User struct {
+	Id           int64
+	Userid       int64
+	SuperUser    bool
+	UserName     string
+	UserImageURL *string
 }
 
 func init() {
@@ -70,6 +90,8 @@ func init() {
 	// 需要在init中注册定义的model
 	orm.RegisterModel(new(Category))
 	orm.RegisterModel(new(Topic))
+	orm.RegisterModel(new(User))
+	orm.RegisterModel(new(Respone))
 }
 
 // Register database
@@ -131,7 +153,10 @@ func RegDbSqlite() error {
 	return nil
 }
 
-func AddTopic(title, content string) error {
+func TopicUpdate(op, tid, title, content string) error {
+	var id int64
+	var err error
+	tp := new(Topic)
 	o := orm.NewOrm()
 
 	//tp := Topic{
@@ -143,18 +168,33 @@ func AddTopic(title, content string) error {
 	//TODO:使用ORM接口插入失败
 	//_, err := o.Insert(tp)
 
-	_, err := o.Raw("INSERT INTO topic VALUES(?,?,?,?,?,?,?,?,?,?,?)", nil, 0, title, content, time.Now(), time.Now(), 0, "hwp", 0, 0, 0).Exec()
+	switch op {
+	case "add":
+		_, err = o.Raw("INSERT INTO Topic VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", nil, 0, title, content, time.Now(), time.Now(), 0, "hwp", 0, 0, 0, 0, 0).Exec()
+
+	case "mod":
+		qs := o.QueryTable("Topic")
+		err = qs.Filter("id", tid).One(tp)
+		if err != nil {
+			beego.Error(err)
+		}
+		id, err = strconv.ParseInt(tid, 10, 64)
+		if err != nil {
+			beego.Error(err)
+		}
+		_, err = o.Raw("UPDATE Topic SET Title=? Content=? Updated=? WHERE Id=?", title, content, time.Now(), id).Exec()
+	}
+
 	if err != nil {
-		clog.Clogv(clog.Red, "Raw SQL exec fail!")
 		beego.Error(err)
 	}
+
 	return err
 }
 
 func AddCategory(name string) error {
 	o := orm.NewOrm()
 	cate := &Category{Title: name}
-	clog.Clogv(clog.Green, "name=%s", name)
 
 	qs := o.QueryTable("category")
 	err := qs.Filter("title", name).One(cate)
@@ -204,7 +244,7 @@ func GetAllCategories() ([]*Category, error) {
 func GetAllTopics() ([]*Topic, error) {
 	o := orm.NewOrm()
 	tps := make([]*Topic, 0)
-	qs := o.QueryTable("topic")
+	qs := o.QueryTable("Topic")
 	_, err := qs.All(&tps)
 	return tps, err
 }
@@ -212,8 +252,59 @@ func GetAllTopics() ([]*Topic, error) {
 func GetTopicById(tid string) (*Topic, error) {
 	o := orm.NewOrm()
 	tp := new(Topic)
-	qs := o.QueryTable("topic")
+	qs := o.QueryTable("Topic")
 	err := qs.Filter("id", tid).One(tp)
 
+	//TODO:use orm insert or update in sqlite3 are allway clrash
+	//update Views
+	//tp.Views++
+	//clog.Clogv(clog.Green, "tp.Views=%d", tp.Views)
+	//clog.Clogv(clog.Green, "Views to string=%s", strconv.FormatInt(tp.Views, 10))
+	//o.Update(tp, strconv.FormatInt(tp.Views, 10))
+
+	//exec Raw SQL
+	var id int64
+	id, err = strconv.ParseInt(tid, 10, 64)
+	tp.Views++
+	_, err = o.Raw("UPDATE Topic SET Views=? WHERE Id=?", tp.Views, id).Exec()
+	if err != nil {
+		clog.Clogv(clog.Red, "Raw SQL exec fail!")
+		beego.Error(err)
+	}
+
 	return tp, err
+}
+
+func ResponeUpdate(op string, rp *Respone) error {
+	var err error
+	rtp := new(Respone)
+	o := orm.NewOrm()
+
+	//tp := Topic{
+	//	Title:   title,
+	//	Content: content,
+	//	Created: time.Now(),
+	//	Updated: time.Now(),
+	//}
+	//TODO:使用ORM接口插入失败
+	//_, err := o.Insert(tp)
+
+	switch op {
+	case "add":
+		_, err = o.Raw("INSERT INTO Respone VALUES(?,?,?,?,?,?,?)", nil, rp.TopicId, rp.RpName, rp.Title, rp.Content, time.Now(), rp.ReplyLastUserId).Exec()
+
+	case "del":
+		qs := o.QueryTable("Respone")
+		err = qs.Filter("TopicId", rp.TopicId).One(rtp)
+		if err != nil {
+			beego.Error(err)
+		}
+		_, err = o.Raw("DELETE FROM Respone WHERE TopicId=?", rp.TopicId).Exec()
+	}
+
+	if err != nil {
+		beego.Error(err)
+	}
+
+	return err
 }
