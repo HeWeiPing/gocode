@@ -32,7 +32,7 @@ body{
 	<form method="GET" action="/category">
 		<div class="form-group">
 			<label>分类名称</label>
-			<input id="catId" class="form-control" placeholder="分类名称" name="catName">
+			<input id="catId" class="form-control" placeholder="分类名称" name="catName" onfocus="return checkLogin();">
 			<button type="submit" class="btn btn-default" onclick="return checkInput();">添加</button>
 			<input type="hidden" name="op" value="add">
 		</div>
@@ -50,19 +50,27 @@ body{
 		<tbody>
 		{{range .Categories}}
 		<tr>
-		<td>{{.Id}}</td>
-		<td>{{.Title}}</td>
-		<td>{{.TopicCount}}</td>
-		<td>
-			<a href="/category?op=del&cid={{.Id}}">删除</a>
-		</td>
-	</tr>
+			<td>{{.Id}}</td>
+			<td>{{.Title}}</td>
+			<td>{{.TopicCount}}</td>
+			<td>
+				<a href="/category?op=del&cid={{.Id}}" onclick="return checkLogin();">删除</a>
+			</td>
+		</tr>
 		{{end}}
 		</tbody>
 	</table>
+</div>
 
+<script type="text/javascript" >
 
-	<script type="text/javascript">
+function checkLogin(){
+	if ({{.IsLogin}} != true){
+			window.location.href="/login?from=category"
+			return false
+	}
+}
+
 function checkInput(){
 	var cid= document.getElementById("catId");
 	if (cid.value.length == 0){
@@ -71,9 +79,7 @@ function checkInput(){
 	}
 	return true
 }
-	</script>
-
-</div>
+</script>
 
 <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="static/js/bootstrap.min.js"></script>

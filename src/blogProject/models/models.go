@@ -208,3 +208,12 @@ func GetAllTopics() ([]*Topic, error) {
 	_, err := qs.All(&tps)
 	return tps, err
 }
+
+func GetTopicById(tid string) (*Topic, error) {
+	o := orm.NewOrm()
+	tp := new(Topic)
+	qs := o.QueryTable("topic")
+	err := qs.Filter("id", tid).One(tp)
+
+	return tp, err
+}

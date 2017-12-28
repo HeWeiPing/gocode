@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"blogProject/models"
 	"clog"
 	"github.com/astaxie/beego"
 )
@@ -17,9 +18,14 @@ func (this *HomeController) Get() {
 	clog.Clogv(clog.Pink, "Rq pwd=%s", this.Ctx.Input.Cookie("pwd"))
 	clog.Clogv(clog.Pink, "Rq autoLogin=%s", this.Input().Get("autoLogin"))
 
+	var err error
 	this.TplName = "home.html"
 	this.Data["IsHome"] = true
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
+	this.Data["Topics"], err = models.GetAllTopics()
+	if err != nil {
+		beego.Error(err)
+	}
 	clog.Clogv(clog.Red, "IsLogin=%t", checkAccount(this.Ctx))
 
 }

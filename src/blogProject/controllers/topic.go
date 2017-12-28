@@ -42,4 +42,5 @@ func (this *TopicController) Post() {
 
 func (this *TopicController) Add() {
 	this.TplName = "topic_add.html"
+	this.Data["IsLogin"] = checkAccount(this.Ctx)
 }

@@ -9,12 +9,12 @@ body{
 </style>
 </head>
 
-<body>
+<body onload="document.getElementById('uname').focus()">
 <div id="loginModal" class="modal show">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" onclick="return backToHome();">x</button>
+				<button type="button" class="close" onclick="javascript:history.back(-1);">x</button>
 				<h1 class="text-center text-primary">登录</h1>
 			</div>
 			<div class="modal-body">
@@ -38,13 +38,13 @@ body{
 					</div>
 				</form>
 			</div><!--modal-body-->
-			  <div class="modal-footer">
-			 </div>
+			<div class="modal-footer">
+			</div>
 		</div><!--modal-content-->
 	</div><!--modal-dialog-->
 </div><!-- model show-->
 
-<script type="text/javascript">
+<script>
 function checkInput(){
 	var uname = document.getElementById("uname");
 	if (uname.value.length == 0){
@@ -59,10 +59,18 @@ function checkInput(){
 
 	return true
 }
+<!--
+function backToPreview(){
+	var pre = onclick="javascript:history.back(-1);
+}
+-->
+
 function backToHome(){
 	window.location.href = "/";
 	return false
 }
+
+
 </script>
 
 </body> </html>
