@@ -4,6 +4,7 @@ import (
 	"blogProject/models"
 	//	"clog"
 	"github.com/astaxie/beego"
+	"strconv"
 )
 
 type TopicController struct {
@@ -27,13 +28,25 @@ func (this *TopicController) Post() {
 		return
 	}
 
+	var tid int64
 	var err error
 	op := this.Input().Get("op")
-	tid := this.Input().Get("tid")
+	idstr := this.Input().Get("tid")
 	title := this.Input().Get("title")
 	content := this.Input().Get("content")
+	tid, err = strconv.ParseInt(idstr, 10, 64)
+	tp := &models.Topic{
+		Id:      tid,
+		Title:   title,
+		Content: content,
+	}
 
-	err = models.TopicUpdate(op, tid, title, content)
+	//err = models.TopicUpdate(op, tid, title, content)
+	//if err != nil {
+	//	beego.Error(err)
+	//}
+
+	err = models.TopicOps(op, tp)
 	if err != nil {
 		beego.Error(err)
 	}

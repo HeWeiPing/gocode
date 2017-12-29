@@ -12,7 +12,7 @@
 	<ul class="nav navbar-nav">
 		{{if .IsLogin}}
 		<li>
-			<a {{if .IsUserSpace}}{{else}}href="/user?"{{end}}>个人中心</a>
+			<a {{if .IsUserSpace}}{{else}}href="/personalPage"{{end}}>个人中心</a>
 		</li>
 		<li>
 			<a href="/login?exit=true">退出</a>

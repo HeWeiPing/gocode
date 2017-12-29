@@ -1,7 +1,6 @@
 {{template "header"}}
 <title>{{.TitleView.Title}} -- 我的beego博客</title>
 <style>
-body{ padding-top: 70px; }
 .col-center-block {
 	float: none;
 	display: block;
@@ -16,7 +15,7 @@ body{ padding-top: 70px; }
 	{{template "navbar" .}}
 </div>
 
-<form method="GET" action="/category">
+<form method="POST" action="/topicView?tid={{.TitleView.Id}}">
 <div class="container">
 	<div class="col-center-block">
 		<div class="page-header">
@@ -28,14 +27,37 @@ body{ padding-top: 70px; }
 		</div>
 	</div>
 </div>
-<button type="submit" class="btn btn-default" onclick="return checkInput();">添加评论</button>
 
+{{range .Replys}}
+<div class="container">
+	<p>
+	<label style="font-size:20px">{{.Content}}</label>
+	</p>
+</div>
+{{end}}
+
+<button type="submit" class="btn btn-default" onclick="return checkInput();">添加评论</button>
+<input type="hidden" name="op" value="add" name="rp_title" value="{{.TitleView.Title}}">
 <div class="form-group">
-	<textarea name="rp_content" cols="30" rows="10" class="form-control"></textarea>
+	<textarea id="rp_content" name="rp_content" cols="30" rows="10" class="form-control"></textarea>
 </div>
 
-
 </form>
+
+<script type="text/javascript">
+function checkInput(){
+	var ctx= document.getElementById("rp_content");
+	if (ctx.value.length == 0){
+		alert("请输入评论内容！")
+			return false
+	}
+	return true
+}
+
+</script>
+
+
+
 <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
 </body>

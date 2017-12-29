@@ -13,6 +13,7 @@ func init() {
 	beego.Router("/login", &controllers.LoginController{})
 	beego.Router("/category", &controllers.CategoryController{})
 	beego.Router("/topicView", &controllers.TopicViewController{})
+	beego.Router("/personalPage", &controllers.PersonalPageController{})
 	beego.AutoRouter(&controllers.TopicController{}) //自动路由
 
 }

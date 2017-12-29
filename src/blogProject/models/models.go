@@ -33,7 +33,6 @@ type Category struct {
 	Title           string
 	Created         time.Time `orm:"index"`
 	Views           int64     `orm:"index"`
-	TopicTime       time.Time `orm:"index"`
 	TopicCount      int64
 	TopicLastUserId int64
 }
@@ -67,10 +66,14 @@ type Respone struct {
 
 type User struct {
 	Id           int64
-	Userid       int64
-	SuperUser    bool
 	UserName     string
-	UserImageURL *string
+	UserPwd      string
+	UserImageURL string `orm:"size(512)"`
+	UserBirthday string
+	UserEmail    string
+	UserPhone    string
+	UserAddr     string `orm:"size(512)"`
+	SuperUser    bool
 }
 
 func init() {
@@ -153,36 +156,40 @@ func RegDbSqlite() error {
 	return nil
 }
 
-func TopicUpdate(op, tid, title, content string) error {
-	var id int64
+//Topics Operations just like "add" "del" "mod" ...
+func TopicOps(op string, p *Topic) error {
 	var err error
-	tp := new(Topic)
 	o := orm.NewOrm()
 
-	//tp := Topic{
-	//	Title:   title,
-	//	Content: content,
-	//	Created: time.Now(),
-	//	Updated: time.Now(),
-	//}
+	ptmp := &Topic{
+	//Id: p.Id,
+	//Title:   p.Title,
+	//Content: p.Content,
+	//Updated: time.Now(),
+	//ReplyTime: time.Now(),
+	//Created:   time.Now(),
+	}
 	//TODO:使用ORM接口插入失败
+	//DONE:使用ORM接口失败问题已解决：
+	//因为数据库建表时有些字段明确不能为空而插入数据为空
 	//_, err := o.Insert(tp)
 
 	switch op {
 	case "add":
-		_, err = o.Raw("INSERT INTO Topic VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", nil, 0, title, content, time.Now(), time.Now(), 0, "hwp", 0, 0, 0, 0, 0).Exec()
-
+		ptmp.Created = time.Now()
+		ptmp.ReplyTime = time.Now()
+		ptmp.Title = p.Title
+		ptmp.Content = p.Content
+		ptmp.Updated = time.Now()
+		_, err = o.Insert(ptmp)
 	case "mod":
-		qs := o.QueryTable("Topic")
-		err = qs.Filter("id", tid).One(tp)
-		if err != nil {
-			beego.Error(err)
-		}
-		id, err = strconv.ParseInt(tid, 10, 64)
-		if err != nil {
-			beego.Error(err)
-		}
-		_, err = o.Raw("UPDATE Topic SET Title=? Content=? Updated=? WHERE Id=?", title, content, time.Now(), id).Exec()
+		_, err = o.Update(p)
+
+		//id, err = strconv.ParseInt(tid, 10, 64)
+		//if err != nil {
+		//	beego.Error(err)
+		//}
+		//_, err = o.Raw("UPDATE Topic SET Title=? Content=? Updated=? WHERE Id=?", title, content, time.Now(), id).Exec()
 	}
 
 	if err != nil {
@@ -192,6 +199,35 @@ func TopicUpdate(op, tid, title, content string) error {
 	return err
 }
 
+//Category Operations just like "add" "del" "mod" ...
+func CategoryOps(op string, p *Category) error {
+	var err error
+	o := orm.NewOrm()
+
+	ptmp := &Category{
+		Title: p.Title,
+	}
+
+	switch op {
+	case "add":
+		ptmp.Created = time.Now()
+		_, err = o.Insert(ptmp)
+	case "mod":
+		_, err = o.Update(ptmp)
+	case "del":
+		ptmp.Id = p.Id
+		_, err = o.Delete(ptmp)
+
+	}
+
+	if err != nil {
+		beego.Error(err)
+	}
+
+	return err
+}
+
+/*
 func AddCategory(name string) error {
 	o := orm.NewOrm()
 	cate := &Category{Title: name}
@@ -215,8 +251,9 @@ func AddCategory(name string) error {
 	}
 
 	return nil
-}
+}*/
 
+/*
 func DelCategory(cid string) error {
 	id, err := strconv.ParseInt(cid, 10, 64)
 	if err != nil {
@@ -231,7 +268,7 @@ func DelCategory(cid string) error {
 	}
 
 	return err
-}
+}*/
 
 func GetAllCategories() ([]*Category, error) {
 	o := orm.NewOrm()
@@ -241,12 +278,21 @@ func GetAllCategories() ([]*Category, error) {
 	return cates, err
 }
 
-func GetAllTopics() ([]*Topic, error) {
+func GetAllTopics(orderByTimeDec bool) ([]*Topic, error) {
 	o := orm.NewOrm()
 	tps := make([]*Topic, 0)
 	qs := o.QueryTable("Topic")
 	_, err := qs.All(&tps)
 	return tps, err
+}
+
+func GetAllReplysById(tid string) ([]*Respone, error) {
+	o := orm.NewOrm()
+	rps := make([]*Respone, 0)
+	qs := o.QueryTable("Respone")
+	_, err := qs.Filter("TopicId", tid).All(&rps)
+
+	return rps, err
 }
 
 func GetTopicById(tid string) (*Topic, error) {
@@ -255,18 +301,12 @@ func GetTopicById(tid string) (*Topic, error) {
 	qs := o.QueryTable("Topic")
 	err := qs.Filter("id", tid).One(tp)
 
-	//TODO:use orm insert or update in sqlite3 are allway clrash
-	//update Views
-	//tp.Views++
-	//clog.Clogv(clog.Green, "tp.Views=%d", tp.Views)
-	//clog.Clogv(clog.Green, "Views to string=%s", strconv.FormatInt(tp.Views, 10))
-	//o.Update(tp, strconv.FormatInt(tp.Views, 10))
-
 	//exec Raw SQL
-	var id int64
-	id, err = strconv.ParseInt(tid, 10, 64)
+	//var id int64
+	//id, err = strconv.ParseInt(tid, 10, 64)
 	tp.Views++
-	_, err = o.Raw("UPDATE Topic SET Views=? WHERE Id=?", tp.Views, id).Exec()
+	o.Update(tp, "Views")
+	//_, err = o.Raw("UPDATE Topic SET Views=? WHERE Id=?", tp.Views, id).Exec()
 	if err != nil {
 		clog.Clogv(clog.Red, "Raw SQL exec fail!")
 		beego.Error(err)
@@ -275,36 +315,63 @@ func GetTopicById(tid string) (*Topic, error) {
 	return tp, err
 }
 
-func ResponeUpdate(op string, rp *Respone) error {
+func ResponeOps(op string, rp *Respone) error {
 	var err error
-	rtp := new(Respone)
 	o := orm.NewOrm()
-
-	//tp := Topic{
-	//	Title:   title,
-	//	Content: content,
-	//	Created: time.Now(),
-	//	Updated: time.Now(),
-	//}
-	//TODO:使用ORM接口插入失败
-	//_, err := o.Insert(tp)
+	ptmp := &Respone{
+		TopicId:         rp.TopicId,
+		RpName:          rp.RpName,
+		Title:           rp.Title,
+		Content:         rp.Content,
+		ReplyLastUserId: rp.ReplyLastUserId,
+	}
 
 	switch op {
 	case "add":
-		_, err = o.Raw("INSERT INTO Respone VALUES(?,?,?,?,?,?,?)", nil, rp.TopicId, rp.RpName, rp.Title, rp.Content, time.Now(), rp.ReplyLastUserId).Exec()
+		ptmp.Created = time.Now()
+		//_, err = o.Raw("INSERT INTO Respone VALUES(?,?,?,?,?,?,?)", nil, rp.TopicId, rp.RpName, rp.Title, rp.Content, time.Now(), rp.ReplyLastUserId).Exec()
+		_, err = o.Insert(ptmp)
+	case "del":
+		_, err = o.Delete(ptmp)
+	}
+	if err != nil {
+		beego.Error(err)
+	}
+
+	return err
+}
+
+func IsAccountExist(name string) bool {
+	o := orm.NewOrm()
+	pu := new(User)
+	qs := o.QueryTable("User")
+	err := qs.Filter("UserName", name).One(pu)
+
+	if err != nil {
+		beego.Error(err)
+		return false
+	}
+	return name == pu.UserName
+}
+
+//User Operations just like "add" "del" "mod" ...
+func UserOps(op string, pu *User) error {
+	var err error
+	o := orm.NewOrm()
+
+	switch op {
+	case "add":
+		//_, err = o.Raw("INSERT INTO User VALUES(?,?,?,?,?,?,?,?,?)", nil, pu.UserName, pu.UserPwd, pu.UserImageURL, pu.UserBirthday, pu.UserEmail, pu.UserPhone, pu.UserAddr, pu.SuperUser).Exec()
+
+		//TODO:使用ORM接口插入失败
+		_, err = o.Insert(pu)
 
 	case "del":
-		qs := o.QueryTable("Respone")
-		err = qs.Filter("TopicId", rp.TopicId).One(rtp)
-		if err != nil {
-			beego.Error(err)
-		}
-		_, err = o.Raw("DELETE FROM Respone WHERE TopicId=?", rp.TopicId).Exec()
+	case "mod":
 	}
 
 	if err != nil {
 		beego.Error(err)
 	}
-
 	return err
 }

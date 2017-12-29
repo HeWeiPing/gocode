@@ -1,7 +1,6 @@
 package main
 
 import (
-	//	"blogProject/controllers"
 	"blogProject/models"
 	_ "blogProject/routers"
 	"clog"

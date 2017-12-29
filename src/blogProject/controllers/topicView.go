@@ -11,33 +11,33 @@ type TopicViewController struct {
 	beego.Controller
 }
 
-func (this *TopicViewController) Get() {
-	clog.Clogv(clog.Yellow, "Rq URI=%s", this.Ctx.Input.URI())
-	clog.Clogv(clog.Pink, "Rq(exit)=%s", this.Input().Get("exit"))
-	clog.Clogv(clog.Yellow, "isExit=%t", this.Input().Get("exit") == "true")
-	clog.Clogv(clog.Pink, "Rq uname=%s", this.Ctx.Input.Cookie("uname"))
-	clog.Clogv(clog.Pink, "Rq pwd=%s", this.Ctx.Input.Cookie("pwd"))
-	clog.Clogv(clog.Pink, "Rq autoLogin=%s", this.Input().Get("autoLogin"))
+var viewTopicId string
 
+func (this *TopicViewController) Get() {
 	var err error
 	this.TplName = "topic_view.html"
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
 
-	tid := this.Input().Get("tid")
-	clog.Clogv(clog.Pink, "view topic tid=%s", tid)
-	this.Data["TitleView"], err = models.GetTopicById(tid)
+	viewTopicId = this.Input().Get("tid")
+	clog.Clogv(clog.Pink, "view topic viewTopicId=%s", viewTopicId)
+
+	//get the #id topic
+	this.Data["TitleView"], err = models.GetTopicById(viewTopicId)
 	if err != nil {
 		beego.Error(err)
 	}
-	clog.Clogv(clog.Red, "IsLogin=%t", checkAccount(this.Ctx))
-
+	//get the #id topic all of replys
+	this.Data["Replys"], err = models.GetAllReplysById(viewTopicId)
+	if err != nil {
+		beego.Error(err)
+	}
 }
 
 func (this *TopicViewController) Post() {
 	var err error
 	repl := new(models.Respone)
 	op := this.Input().Get("op")
-	rp_tid := this.Input().Get("rp_tid")
+	rp_tid := this.Input().Get("tid")
 	rp_name := this.Input().Get("rp_name")
 	rp_content := this.Input().Get("rp_content")
 	rp_title := this.Input().Get("rp_title")
@@ -47,8 +47,28 @@ func (this *TopicViewController) Post() {
 	repl.Title = rp_title
 	repl.Content = rp_content
 
-	err = models.ResponeUpdate(op, repl)
+	err = models.ResponeOps(op, repl)
 	if err != nil {
 		beego.Error(err)
 	}
+
+	//increment topic ReplyCount(int64)
+	var tmp *models.Topic
+	tmp, err = models.GetTopicById(viewTopicId)
+	if err != nil {
+		beego.Error(err)
+	}
+	tmp.ReplyCount++
+	err = models.TopicOps("mod", tmp)
+	if err != nil {
+		beego.Error(err)
+	}
+
+	clog.Clogv(clog.Yellow, "op=%s", op)
+	clog.Clogv(clog.Yellow, "rp_tid=%s", rp_tid)
+	clog.Clogv(clog.Yellow, "rp_content=%s", rp_content)
+	clog.Clogv(clog.Yellow, "rp_title=%s", rp_title)
+
+	this.Redirect("/topicView?tid="+viewTopicId, 302)
+	return
 }
