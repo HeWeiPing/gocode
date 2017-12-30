@@ -14,7 +14,7 @@ func (this *PersonalPageController) Get() {
 	var err error
 	this.TplName = "personal_page.html"
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
-	this.Data["Topics"], err = models.GetAllTopics()
+	this.Data["Topics"], err = models.GetAllTopics(true)
 	if err != nil {
 		beego.Error(err)
 	}

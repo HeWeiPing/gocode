@@ -278,11 +278,16 @@ func GetAllCategories() ([]*Category, error) {
 	return cates, err
 }
 
-func GetAllTopics(orderByTimeDec bool) ([]*Topic, error) {
+func GetAllTopics(isDesc bool) ([]*Topic, error) {
 	o := orm.NewOrm()
 	tps := make([]*Topic, 0)
 	qs := o.QueryTable("Topic")
-	_, err := qs.All(&tps)
+	orderField := "Created"
+	if isDesc {
+		orderField = "-" + orderField
+	}
+	_, err := qs.OrderBy(orderField).All(&tps)
+
 	return tps, err
 }
 

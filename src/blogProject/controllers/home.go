@@ -22,7 +22,7 @@ func (this *HomeController) Get() {
 	this.TplName = "home.html"
 	this.Data["IsHome"] = true
 	this.Data["IsLogin"] = checkAccount(this.Ctx)
-	this.Data["Topics"], err = models.GetAllTopics(false)
+	this.Data["Topics"], err = models.GetAllTopics(true)
 	if err != nil {
 		beego.Error(err)
 	}
