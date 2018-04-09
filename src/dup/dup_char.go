@@ -15,13 +15,12 @@ func main() {
 
 	for s.Scan() {
 		buf := s.Bytes()
-		fmt.Println("***********")
 
 		for _, v := range buf {
 			tmp[v]++
 		}
 	}
 	for i, v := range tmp {
-		fmt.Printf("%c\t%d\n", i, v)
+		fmt.Printf("%q\t%d\n", i, v)
 	}
 }
