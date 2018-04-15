@@ -4,24 +4,27 @@ import (
 	"fmt"
 )
 
-type Book struct{
-	title	string
-	author	string
-	subject	string
-	book_id	string
+type Book struct {
+	title   string
+	author  string
+	subject string
+	book_id string
+	next    *Book //OK
+	//subbook Book  //Not Ok
 }
-func main(){
+
+func main() {
 	var Book1 Book
 	var Book2 Book
 
 	/* book1 描述 */
-	Book1.title	= "Go 语言"
+	Book1.title = "Go 语言"
 	Book1.author = "HWP"
 	Book1.subject = "Go 语言教程"
 	Book1.book_id = "1234567890"
 
 	/* book2 描述 */
-	Book2.title	= "Python 语言"
+	Book2.title = "Python 语言"
 	Book2.author = "HWP"
 	Book2.subject = "Python 语言教程"
 	Book2.book_id = "9876543210"
@@ -44,8 +47,7 @@ func main(){
 	printBook(Book2)
 }
 
-
-func printBook(b Book){
+func printBook(b Book) {
 	/* 打印 Book 信息 */
 	fmt.Printf("Book title: %s\n", b.title)
 	fmt.Printf("Book author: %s\n", b.author)

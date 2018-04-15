@@ -2,8 +2,6 @@ package main
 
 import "fmt"
 
-//import "time"
-
 var ch chan bool
 
 func Go(ch chan bool) {
@@ -19,9 +17,10 @@ func main() {
 	pch = &ch
 	fmt.Printf("ch type:%T\n", ch)
 	fmt.Printf("pch type:%T\n", pch)
+	fmt.Printf("cap(ch)=%d\n", cap(ch))
 
 	go Go(*pch)
 	//time.Sleep(2 * time.Second)
 	<-ch //Be blocked until GO() finish
-	<-ch //dead lock
+	//<-ch //dead lock
 }
