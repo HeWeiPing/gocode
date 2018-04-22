@@ -23,7 +23,7 @@ const (
 )
 
 func main() {
-	http.HandleFunc("/", handler)
+	http.ListenAndServe("/", handler)
 	log.Fatal(http.ListenAndServe("localhost:9090", nil))
 }
 
